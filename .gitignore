@@ -1,0 +1,58 @@
+# Build outputs
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# Logs
+*.log
+
+# OS junk
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Test results
+TestResult*/
+*.coverage
+*.coveragexml
+
+# ASP.NET Core (if any web projects exist)
+appsettings.Development.json
+appsettings.Local.json
+
+# Global .NET tools
+.store/
+.tools/
+
+# Auto‑generated files
+Generated/

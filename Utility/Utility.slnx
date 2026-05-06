@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../Zyprix/Zyprix.csproj" />
+  <Project Path="Utils/Utils.csproj" Id="76510e84-33c0-41a9-ad06-e5e8fe0753ce" />
+</Solution>
