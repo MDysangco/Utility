@@ -7,10 +7,10 @@ namespace Zyprix.Data.Interfaces
 {
     public interface ICoinRepository
     {
-        IEnumerable<Coin> GetAllCoins();
-        IEnumerable<Coin> GetActiveCoins();
-        Coin GetCoin(int coinId);
-        bool UpdateCoin(Coin coin, bool active, long binanceListingDate);
+        public Task<List<Coin>> GetAllCoins();
+        public Task<List<Coin>> GetActiveCoins();
+        public Task<Coin> GetCoin(int coinId);
+        public Task<bool> UpdateCoin(Coin coin, bool active, long binanceListingDate);
 
         //TODO:
         Coin CreateCoin(Coin coin);

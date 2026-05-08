@@ -16,10 +16,12 @@ namespace Zyprix.Services
             _coinRepository = coinRepository;
         }
 
-        public IEnumerable<Coin> GetAllCoins() => _coinRepository.GetAllCoins();
-        public IEnumerable<Coin> GetActiveCoins() => _coinRepository.GetActiveCoins();
-        public Coin GetCoin(int id) => _coinRepository.GetCoin(id);
-        public bool UpdateCoin(Coin coin, bool active, long listing) => _coinRepository.UpdateCoin(coin, active, listing);
+        public async Task<List<Coin>> GetAllCoins() => await _coinRepository.GetAllCoins();
+        public async Task<List<Coin>> GetActiveCoins() => await _coinRepository.GetActiveCoins();
+        public async Task<Coin> GetCoin(int id) => await _coinRepository.GetCoin(id);
+        public async Task<bool> UpdateCoin(Coin coin, bool active, long listing) => await _coinRepository.UpdateCoin(coin, active, listing);
+
+        //TODO:
         public Coin CreateCoin(Coin coin) => _coinRepository.CreateCoin(coin);
         public bool RemoveCoin(int id) => _coinRepository.RemoveCoin(id);
     }

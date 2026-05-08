@@ -18,7 +18,7 @@ namespace Zyprix.Data.Repositories
             _connectionString = connectionString;
         }
 
-        public int DeleteKlinesByDateRange(long startDate, long endDate)
+        public async Task<int> DeleteKlinesByDateRange(long startDate, long endDate)
         {
             try
             {
@@ -28,9 +28,9 @@ namespace Zyprix.Data.Repositories
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("StartDate", SqlDbType.Decimal).Value = startDate;
                     cmd.Parameters.Add("EndDate", SqlDbType.Decimal).Value = endDate;
-                    conn.Open();
+                    await conn.OpenAsync();
 
-                    return cmd.ExecuteNonQuery();
+                    return await cmd.ExecuteNonQueryAsync();
                 }
             }
             catch (Exception ex)
@@ -40,7 +40,7 @@ namespace Zyprix.Data.Repositories
             }
         }
 
-        public Kline GetEarliestRecordedKline(Coin coin, KlineInterval interval)
+        public async Task<Kline> GetEarliestRecordedKline(int coinId, KlineInterval interval)
         {
             try
             {
@@ -48,13 +48,13 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetEarliestRecordedKline, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coin.Id;
+                    cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId;
                     cmd.Parameters.Add("Interval", SqlDbType.Int).Value = (int)interval;
-                    conn.Open();
+                    await conn.OpenAsync();
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
                             return reader.MapTo<Kline>();
                         }
@@ -62,7 +62,6 @@ namespace Zyprix.Data.Repositories
                 }
 
                 return new Kline();
-
             }
             catch (Exception ex)
             {
@@ -71,7 +70,7 @@ namespace Zyprix.Data.Repositories
             }
         }
 
-        public Kline GetLatestRecordedKline(Coin coin, KlineInterval interval)
+        public async Task<Kline> GetLatestRecordedKline(int coinId, KlineInterval interval)
         {
             try
             {
@@ -79,13 +78,13 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetLatestRecordedKline, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coin.Id;
+                    cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId;
                     cmd.Parameters.Add("Interval", SqlDbType.Int).Value = (int)interval;
-                    conn.Open();
+                    await conn.OpenAsync();
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
                             return reader.MapTo<Kline>();
                         }
@@ -102,7 +101,7 @@ namespace Zyprix.Data.Repositories
             }
         }
 
-        public bool InsertKlines(List<Kline> klines)
+        public async Task<bool> InsertKlines(List<Kline> klines)
         {
             try
             {
@@ -110,7 +109,7 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.InsertKlines, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    conn.Open();
+                    await conn.OpenAsync();
 
                     DataTable dt = new DataTable();
                     dt.Columns.Add("@CoinId", typeof(int));
@@ -146,7 +145,7 @@ namespace Zyprix.Data.Repositories
 
                     cmd.Parameters.Add(param);
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    return await cmd.ExecuteNonQueryAsync() > 0;
                 }
             }
             catch (Exception ex)

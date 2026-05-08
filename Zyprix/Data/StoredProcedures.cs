@@ -11,6 +11,7 @@ namespace Zyprix.Data
         public const string GetActiveCoins = "dbo.GetActiveCoins";
         public const string GetCoin = "dbo.GetCoin";
         public const string RemoveCoin = "dbo.RemoveCoin";
+        public const string UpdateCoin = "dbo.UpdateCoin";
 
         //Klines
         public const string DeleteKlinesByDateRange = "dbo.DeleteKlinesByDateRange";

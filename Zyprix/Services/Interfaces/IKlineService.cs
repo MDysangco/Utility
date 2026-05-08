@@ -7,10 +7,10 @@ namespace Zyprix.Services.Interfaces
 {
     public interface IKlineService
     {
-        public Kline GetLatestRecordedKline(Coin coin, KlineInterval interval);
-        public Kline GetEarliestRecordedKline(Coin coin, KlineInterval interval);
-        public bool InsertKlines(List<Kline> klines);
-        public int DeleteKlinesByDateRange(long startDate, long endDate);
+        public Task<Kline> GetLatestRecordedKline(int coinId, KlineInterval interval);
+        public Task<Kline> GetEarliestRecordedKline(int coinId, KlineInterval interval);
+        public Task<bool> InsertKlines(List<Kline> klines);
+        public Task<int> DeleteKlinesByDateRange(long startDate, long endDate);
 
         //TODO:
         public IEnumerable<Kline> GetKlines();
