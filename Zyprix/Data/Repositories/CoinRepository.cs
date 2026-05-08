@@ -16,7 +16,7 @@ namespace Zyprix.Data.Repositories
             _connectionString = connectionString;
         }
 
-        public IEnumerable<Coin> GetAllCoins()
+        public async Task<List<Coin>> GetAllCoins()
         {
             try
             {
@@ -24,13 +24,13 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetAllCoins, conn))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    conn.Open();
+                    await conn.OpenAsync();
 
                     List<Coin> coins = new List<Coin>();
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
                             coins.Add(reader.MapTo<Coin>());
                         }
@@ -47,7 +47,7 @@ namespace Zyprix.Data.Repositories
             }
         }
 
-        public IEnumerable<Coin> GetActiveCoins()
+        public async Task<List<Coin>> GetActiveCoins()
         {
             try
             {
@@ -55,13 +55,13 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetActiveCoins, conn))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    conn.Open();
+                    await conn.OpenAsync();
 
                     List<Coin> coins = new List<Coin>();
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
                             coins.Add(reader.MapTo<Coin>());
                         }
@@ -77,7 +77,7 @@ namespace Zyprix.Data.Repositories
             }
         }
 
-        public Coin GetCoin(int Id)
+        public async Task<Coin> GetCoin(int Id)
         {
             try
             {
@@ -86,13 +86,13 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = Id;
-                    conn.Open();
+                    await conn.OpenAsync();
 
                     List<Coin> coins = new List<Coin>();
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
                             return reader.MapTo<Coin>();
                         }
@@ -108,21 +108,21 @@ namespace Zyprix.Data.Repositories
             }
         }
 
-        public bool UpdateCoin(Coin coin, bool active, long binanceListingDate)
+        public async Task<bool> UpdateCoin(Coin coin, bool active, long binanceListingDate)
         {
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectionString))
-                using (SqlCommand cmd = new SqlCommand("UpdateCoin", conn))
+                using (SqlCommand cmd = new SqlCommand(StoredProcedures.UpdateCoin, conn))
                 {
 
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coin.Id;
                     cmd.Parameters.Add("Active", SqlDbType.Bit).Value = active;
                     cmd.Parameters.Add("BinanceListingDate", SqlDbType.Decimal).Value = binanceListingDate;
-                    conn.Open();
+                    await conn.OpenAsync();
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    return await cmd.ExecuteNonQueryAsync() > 0;
                 }
             }
             catch (Exception ex)
