@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -8,13 +9,14 @@ namespace Utils
     public class HttpHelper
     {
 
-        public static async Task<string?> MakeRequest(HttpMethod method, string url, bool secure)
+        public static async Task<string?> MakeRequest(HttpMethod method, string url, string token)
         {
             using (HttpClient client = new HttpClient())
             {
                 HttpRequestMessage? request = new HttpRequestMessage(method, url);
-                HttpResponseMessage response = await client.SendAsync(request);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+                HttpResponseMessage response = await client.SendAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsStringAsync();
@@ -27,13 +29,15 @@ namespace Utils
             }
         }
 
-        public static async Task<string?> MakePost(string url, string jsonBody, bool secure)
+        public static async Task<string?> MakePost(string url, string jsonBody, string token)
         {
-
             using (HttpClient client = new HttpClient())
             {
                 HttpRequestMessage? request = new HttpRequestMessage(HttpMethod.Post, url);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                 request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
                 HttpResponseMessage response = await client.SendAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
@@ -47,9 +51,9 @@ namespace Utils
             }
         }
 
-        public static async Task<T?> MakeRequest<T>(HttpMethod method, string url, bool secure)
+        public static async Task<T?> MakeRequest<T>(HttpMethod method, string url, string token)
         {
-            string? json = await MakeRequest(method, url, secure);
+            string? json = await MakeRequest(method, url, token);
 
             if (!string.IsNullOrEmpty(json))
             {
@@ -59,9 +63,9 @@ namespace Utils
             return default;
         }
 
-        public static async Task<T?> MakePost<T>(string url, string jsonBody, bool secure)
+        public static async Task<T?> MakePost<T>(string url, string jsonBody, string token)
         {
-            string? json = await MakePost(url, jsonBody, secure);
+            string? json = await MakePost(url, jsonBody, token);
 
             if (!string.IsNullOrEmpty(json))
             {
