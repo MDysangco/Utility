@@ -19,9 +19,7 @@ namespace Zyprix.Services
         public async Task<Kline> GetEarliestRecordedKline(int coinId, KlineInterval interval) => await _klineRepository.GetEarliestRecordedKline(coinId, interval);
         public async Task<bool> InsertKlines(List<Kline> klines) => await _klineRepository.InsertKlines(klines);
         public async Task<int> DeleteKlinesByDateRange(long startDate, long endDate) => await _klineRepository.DeleteKlinesByDateRange(startDate, endDate);
-
-        //TODO:
-        public IEnumerable<Kline> GetKlines() => _klineRepository.GetKlines();
+        public async Task<List<Kline>> GetKlines(int? coinId, KlineInterval? interval) => await _klineRepository.GetKlines(coinId, interval);
 
     }
 }

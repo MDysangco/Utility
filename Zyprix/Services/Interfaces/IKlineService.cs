@@ -11,8 +11,7 @@ namespace Zyprix.Services.Interfaces
         public Task<Kline> GetEarliestRecordedKline(int coinId, KlineInterval interval);
         public Task<bool> InsertKlines(List<Kline> klines);
         public Task<int> DeleteKlinesByDateRange(long startDate, long endDate);
+        public Task<List<Kline>> GetKlines(int? coinId, KlineInterval? interval);
 
-        //TODO:
-        public IEnumerable<Kline> GetKlines();
     }
 }

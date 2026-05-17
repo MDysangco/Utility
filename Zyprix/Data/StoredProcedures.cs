@@ -18,5 +18,14 @@ namespace Zyprix.Data
         public const string GetEarliestRecordedKline = "dbo.GetEarliestRecordedKline";
         public const string GetLatestRecordedKline = "dbo.GetLatestRecordedKline";
         public const string InsertKlines = "dbo.InsertKlines";
+        public const string GetKlines = "dbo.GetKlines";
+
+
+        //Reading
+        public const string InsertReading = "dbo.InsertReading";
+
+        //Configuration
+        public const string InsertConfiguration = "dbo.InsertConfiguration";
+
     }
 }

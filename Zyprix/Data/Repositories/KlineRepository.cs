@@ -155,12 +155,35 @@ namespace Zyprix.Data.Repositories
             }
         }
 
-        public IEnumerable<Kline> GetKlines()
+        public async Task<List<Kline>> GetKlines(int? coinId, KlineInterval? interval)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetKlines, conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId.HasValue ? (object)coinId.Value : DBNull.Value;
+                    cmd.Parameters.Add("Interval", SqlDbType.Int).Value = interval.HasValue ? (object)(int)interval.Value : DBNull.Value;
+                    await conn.OpenAsync();
+
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        List<Kline> klines = new List<Kline>();
+                        while (await reader.ReadAsync())
+                        {
+                            klines.Add(reader.MapTo<Kline>());
+                        }
+
+                        return klines;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<Kline>();
+            }
         }
-
-
-
     }
 }
