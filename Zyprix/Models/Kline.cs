@@ -10,7 +10,7 @@ namespace Zyprix.Models
         public int? Id { get; set; }
         public int? CoinId { get; set; }
         public KlineInterval? Interval { get; set; }
-        public string? KlineOpenTime { get; set; }
+        public long? KlineOpenTime { get; set; }
         public decimal? OpenPrice { get; set; }
         public decimal? HighPrice { get; set; }
         public decimal? LowPrice { get; set; }
