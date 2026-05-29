@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Zyprix.Models;
+﻿using Zyprix.Models;
 
 namespace Zyprix.Data.Interfaces
 {
     public interface IReadingRepository
     {
-        public Task<bool> InsertReading(Reading reading);
+		public Task<List<Reading>> GetReadings(int coinId);
+		public Task<bool> InsertReading(Reading reading);
+		public Task<bool> InsertReadings(List<Reading> readings);
 
-        //TODO:
-        public Task<List<Reading>> GetReadings();
-        public Task<List<Reading>> GetReadings(int coinId);
-        
     }
 
 }

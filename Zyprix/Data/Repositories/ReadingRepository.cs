@@ -1,9 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
+using Utils;
 using Zyprix.Data.Interfaces;
 using Zyprix.Models;
 
@@ -18,8 +15,39 @@ namespace Zyprix.Data.Repositories
             _connectionString = connectionString;
         }
 
+        public async Task<List<Reading>> GetReadings(int coinId)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetReadings, conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+					cmd.Parameters.Add("@CoinId", SqlDbType.Int).Value = coinId;
 
-        public async Task<bool> InsertReading(Reading reading)
+                    await conn.OpenAsync();
+
+					using (SqlDataReader reader = cmd.ExecuteReader())
+					{
+                        List<Reading> readings = new List<Reading>();
+
+						while (await reader.ReadAsync())
+						{
+							readings.Add(reader.MapTo<Reading>());
+						}
+
+                        return readings;
+					}
+				}
+			}
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<Reading>();
+            }
+        }
+
+		public async Task<bool> InsertReading(Reading reading)
         {
             try
             {
@@ -52,20 +80,72 @@ namespace Zyprix.Data.Repositories
                 Console.WriteLine(ex.Message);
                 return false;
             }
-
         }
 
+		public async Task<bool> InsertReadings(List<Reading> readings)
+		{
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlCommand cmd = new SqlCommand(StoredProcedures.InsertReading, conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await conn.OpenAsync();
 
-        //TODO:
-        public Task<List<Reading>> GetReadings()
-        {
-            throw new NotImplementedException();
-        }
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add("@TimestampUtc", typeof(DateTime));
+                    dt.Columns.Add("@CoinId", typeof(int));
+                    dt.Columns.Add("@PredictedClass", typeof(int));
+                    dt.Columns.Add("@ProbSell", typeof(float));
+                    dt.Columns.Add("@ProbHold", typeof(float));
+                    dt.Columns.Add("@ProbBuy", typeof(float));
+                    dt.Columns.Add("@Price", typeof(float));
+                    dt.Columns.Add("@EMA", typeof(float));
+                    dt.Columns.Add("@Volatility", typeof(float));
+                    dt.Columns.Add("@PassedProbFilter", typeof(bool));
+                    dt.Columns.Add("@PassedTrendFilter", typeof(bool));
+                    dt.Columns.Add("@PassedVolFilter", typeof(bool));
+                    dt.Columns.Add("@FinalSignal", typeof(string));
+                    dt.Columns.Add("@ModelId", typeof(int));
+                    dt.Columns.Add("@ConfigRowId", typeof(int));
 
-        public Task<List<Reading>> GetReadings(int coinId)
-        {
-            throw new NotImplementedException();
-        }
+                    foreach(Reading reading in readings)
+                    {
+                        dt.Rows.Add(
+                            reading.TimeStampUTC,
+                            reading.CoinId,
+                            reading.PredictClass,
+                            reading.ProbSell,
+                            reading.ProbHold,
+                            reading.ProbBuy,
+                            reading.Price,
+                            reading.EMA,
+                            reading.Volatility,
+                            reading.PassedProbFilter,
+                            reading.PassedTrendFilter,
+                            reading.PassedVolFilter,
+                            reading.FinalSignal,
+                            reading.ModelId,
+                            reading.ConfigRowId
+                        );
+                    }
 
-    }
+					SqlParameter param = new SqlParameter("@Readings", SqlDbType.Structured)
+					{
+						TypeName = "dbo.ReadingType",
+						Value = dt
+					};
+
+					cmd.Parameters.Add(param);
+
+					return await cmd.ExecuteNonQueryAsync() > 0;
+				}
+			}
+            catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return false;
+			}
+		}
+	}
 }

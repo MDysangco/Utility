@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Zyprix.Data
+﻿namespace Zyprix.Data
 {
     public class StoredProcedures
     {
@@ -10,8 +6,8 @@ namespace Zyprix.Data
         public const string GetAllCoins = "dbo.GetAllCoins";
         public const string GetActiveCoins = "dbo.GetActiveCoins";
         public const string GetCoin = "dbo.GetCoin";
-        public const string RemoveCoin = "dbo.RemoveCoin";
         public const string UpdateCoin = "dbo.UpdateCoin";
+        public const string UpdateCoins = "dbo.UpdateCoins";
 
         //Klines
         public const string DeleteKlinesByDateRange = "dbo.DeleteKlinesByDateRange";
@@ -20,12 +16,13 @@ namespace Zyprix.Data
         public const string InsertKlines = "dbo.InsertKlines";
         public const string GetKlines = "dbo.GetKlines";
 
+		//Reading
+        public const string GetReadings = "dbo.GetReadings";
+		public const string InsertReading = "dbo.InsertReading";
+		public const string InsertReadings = "dbo.InsertReadings";
 
-        //Reading
-        public const string InsertReading = "dbo.InsertReading";
-
-        //Configuration
-        public const string InsertConfiguration = "dbo.InsertConfiguration";
-
-    }
+		//Configuration
+		public const string InsertConfiguration = "dbo.InsertConfiguration";
+		public const string InsertConfigurations = "dbo.InsertConfigurations";
+	}
 }

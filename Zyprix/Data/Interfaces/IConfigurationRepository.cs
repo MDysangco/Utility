@@ -7,10 +7,7 @@ namespace Zyprix.Data.Interfaces
 {
     public interface IConfigurationRepository
     {
-        public Task<int> InsertConfiguration(Configuration config);
-
-        //TODO:
-        public Task<Configuration> GetConfiguration();
-        public Task<List<Configuration>> GetConfigurations();
+		public Task<int> InsertConfiguration(Configuration config);
+		public Task<bool> InsertConfigurations(List<Configuration> config);
     }
 }
