@@ -1,9 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
+using Utils;
 using Zyprix.Data.Interfaces;
 using Zyprix.Models;
 
@@ -18,54 +15,105 @@ namespace Zyprix.Data.Repositories
             _connectionString = connectionString;
         }
 
-
-        public async Task<bool> InsertReading(Reading reading)
+        public async Task<List<Reading>> GetReadings(int coinId)
         {
             try
             {
-                using(SqlConnection conn = new SqlConnection(_connectionString))
-                using(SqlCommand cmd = new SqlCommand(StoredProcedures.InsertReading, conn))
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetReadings, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@TimestampUtc", SqlDbType.DateTime).Value = reading.TimeStampUTC;
-                    cmd.Parameters.Add("@CoinId", SqlDbType.Int).Value = reading.CoinId;
-                    cmd.Parameters.Add("@PredictedClass", SqlDbType.Int).Value = reading.PredictClass;
-                    cmd.Parameters.Add("@ProbSell", SqlDbType.Float).Value = reading.ProbSell;
-                    cmd.Parameters.Add("@ProbHold", SqlDbType.Float).Value = reading.ProbHold;
-                    cmd.Parameters.Add("@ProbBuy", SqlDbType.Float).Value = reading.ProbBuy;
-                    cmd.Parameters.Add("@Price", SqlDbType.Float).Value = reading.Price;
-                    cmd.Parameters.Add("@EMA", SqlDbType.Float).Value = reading.EMA;
-                    cmd.Parameters.Add("@Volatility", SqlDbType.Float).Value = reading.Volatility;
-                    cmd.Parameters.Add("@PassedProbFilter", SqlDbType.Bit).Value = reading.PassedProbFilter;
-                    cmd.Parameters.Add("@PassedTrendFilter", SqlDbType.Bit).Value = reading.PassedTrendFilter;
-                    cmd.Parameters.Add("@PassedVolFilter", SqlDbType.Bit).Value = reading.PassedVolFilter;
-                    cmd.Parameters.Add("@FinalSignal", SqlDbType.NVarChar, 10).Value = reading.FinalSignal;
-                    cmd.Parameters.Add("@ModelId", SqlDbType.Int).Value = reading.ModelId;
-                    cmd.Parameters.Add("@ConfigRowId", SqlDbType.Int).Value = reading.ConfigRowId;
+					cmd.Parameters.Add("@CoinId", SqlDbType.Int).Value = coinId;
 
                     await conn.OpenAsync();
-                    return await cmd.ExecuteNonQueryAsync() > 0;
-                }
-            } 
+
+					using (SqlDataReader reader = cmd.ExecuteReader())
+					{
+                        List<Reading> readings = new List<Reading>();
+
+						while (await reader.ReadAsync())
+						{
+							readings.Add(reader.MapTo<Reading>());
+						}
+
+                        return readings;
+					}
+				}
+			}
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return false;
+                return new List<Reading>();
             }
-
         }
 
+		public async Task<bool> InsertReadings(List<Reading> readings)
+		{
+			try
+			{
+				using (SqlConnection conn = new SqlConnection(_connectionString))
+				using (SqlCommand cmd = new SqlCommand(StoredProcedures.InsertReadings, conn))
+				{
+					cmd.CommandType = CommandType.StoredProcedure;
+					await conn.OpenAsync();
 
-        //TODO:
-        public Task<List<Reading>> GetReadings()
-        {
-            throw new NotImplementedException();
-        }
+					DataTable dt = new DataTable();
+					dt.Columns.Add("@TimestampUtc", typeof(DateTime));
+					dt.Columns.Add("@CoinId", typeof(int));
+					dt.Columns.Add("@PredictedClass", typeof(int));
+					dt.Columns.Add("@ProbSell", typeof(double));
+					dt.Columns.Add("@ProbHold", typeof(double));
+					dt.Columns.Add("@ProbBuy", typeof(double));
+					dt.Columns.Add("@Price", typeof(double));
+					dt.Columns.Add("@EMA", typeof(double));
+					dt.Columns.Add("@Volatility", typeof(double));
+					dt.Columns.Add("@PassedProbFilter", typeof(bool));
+					dt.Columns.Add("@PassedTrendFilter", typeof(bool));
+					dt.Columns.Add("@PassedVolFilter", typeof(bool));
+					dt.Columns.Add("@FinalSignal", typeof(string));
+					dt.Columns.Add("@ModelId", typeof(int));
+					dt.Columns.Add("@ConfigRowId", typeof(int));
+					dt.Columns.Add("@SentToAzure", typeof(bool));
 
-        public Task<List<Reading>> GetReadings(int coinId)
-        {
-            throw new NotImplementedException();
-        }
+					foreach (Reading r in readings)
+					{
+						dt.Rows.Add(
+							r.TimeStampUTC,
+							r.CoinId,
+							r.PredictClass,
+							r.ProbSell,
+							r.ProbHold,
+							r.ProbBuy,
+							r.Price,
+							r.EMA,
+							r.Volatility,
+							r.PassedProbFilter,
+							r.PassedTrendFilter,
+							r.PassedVolFilter,
+							r.FinalSignal,
+							r.ModelId,
+							r.ConfigRowId,
+							r.SentToAzure
+						);
+					}
 
-    }
+					SqlParameter param = new SqlParameter("@Readings", SqlDbType.Structured)
+					{
+						TypeName = "dbo.ReadingType",
+						Value = dt
+					};
+
+					cmd.Parameters.Add(param);
+
+					return await cmd.ExecuteNonQueryAsync() > 0;
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return false;
+			}
+		}
+
+	}
 }

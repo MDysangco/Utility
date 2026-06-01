@@ -10,10 +10,7 @@ namespace Zyprix.Services.Interfaces
         public Task<List<Coin>> GetAllCoins();
         public Task<List<Coin>> GetActiveCoins();
         public Task<Coin> GetCoin(int coinId);
-        public Task<bool> UpdateCoin(Coin coin, bool active, long binanceListingDate);
+        public Task<bool> UpdateCoin(Coin coin);
 
-        //TODO:
-        Coin CreateCoin(Coin coin);
-        bool RemoveCoin(int coinId);
     }
 }

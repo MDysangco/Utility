@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Zyprix.Data.Interfaces;
+﻿using Zyprix.Data.Interfaces;
 using Zyprix.Models;
 using Zyprix.Services.Interfaces;
 
@@ -16,12 +13,8 @@ namespace Zyprix.Services
             _readingRepository = readingRepository;
         }
 
-        public async Task<bool> InsertReading(Reading reading) => await _readingRepository.InsertReading(reading);
-
-        //TODO:
-        public async Task<List<Reading>> GetReadings() => await _readingRepository.GetReadings();
-
-        public async Task<List<Reading>> GetReadings(int coinId) => await _readingRepository.GetReadings(coinId);
+		public async Task<List<Reading>> GetReadings(int coinId) => await _readingRepository.GetReadings(coinId);
+		public async Task<bool> InsertReadings(List<Reading> readings) => await _readingRepository.InsertReadings(readings);
 
     }
 }

@@ -7,6 +7,7 @@ namespace Zyprix.Models
     public class Configuration
     {
         public int Id { get; set; }
+        public string UniqueId { get; set; }
         public decimal BuyProbabilityThreshold {  get; set; }
         public decimal SellProbabilityThreshold { get; set; }
         public int TrendEMALenght { get; set; }

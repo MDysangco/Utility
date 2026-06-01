@@ -17,14 +17,7 @@ namespace Zyprix.Services
             _configurationRepository = configurationRepository;
         }
 
+		public async Task<bool> InsertConfigurations(List<Configuration> configs) => await _configurationRepository.InsertConfigurations(configs);
 
-        public async Task<int> InsertConfiguration(Configuration config) => await _configurationRepository.InsertConfiguration(config);
-
-        //TODO:
-
-        public async Task<Configuration> GetConfiguration() => await _configurationRepository.GetConfiguration();
-
-        public async Task<List<Configuration>> GetConfigurations() => await _configurationRepository.GetConfigurations();
-
-    }
+	}
 }
