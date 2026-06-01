@@ -14,7 +14,6 @@ namespace Zyprix.Services
         }
 
 		public async Task<List<Reading>> GetReadings(int coinId) => await _readingRepository.GetReadings(coinId);
-		public async Task<bool> InsertReading(Reading reading) => await _readingRepository.InsertReading(reading);
 		public async Task<bool> InsertReadings(List<Reading> readings) => await _readingRepository.InsertReadings(readings);
 
     }

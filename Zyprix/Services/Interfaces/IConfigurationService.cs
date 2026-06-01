@@ -7,7 +7,6 @@ namespace Zyprix.Services.Interfaces
 {
     public interface IConfigurationService
     {
-        public Task<int> InsertConfiguration(Configuration config);
 		public Task<bool> InsertConfigurations(List<Configuration> configs);
     }
 }

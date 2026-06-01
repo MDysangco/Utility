@@ -47,88 +47,55 @@ namespace Zyprix.Data.Repositories
             }
         }
 
-		public async Task<bool> InsertReading(Reading reading)
-        {
-            try
-            {
-                using(SqlConnection conn = new SqlConnection(_connectionString))
-                using(SqlCommand cmd = new SqlCommand(StoredProcedures.InsertReading, conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@TimestampUtc", SqlDbType.DateTime).Value = reading.TimeStampUTC;
-                    cmd.Parameters.Add("@CoinId", SqlDbType.Int).Value = reading.CoinId;
-                    cmd.Parameters.Add("@PredictedClass", SqlDbType.Int).Value = reading.PredictClass;
-                    cmd.Parameters.Add("@ProbSell", SqlDbType.Float).Value = reading.ProbSell;
-                    cmd.Parameters.Add("@ProbHold", SqlDbType.Float).Value = reading.ProbHold;
-                    cmd.Parameters.Add("@ProbBuy", SqlDbType.Float).Value = reading.ProbBuy;
-                    cmd.Parameters.Add("@Price", SqlDbType.Float).Value = reading.Price;
-                    cmd.Parameters.Add("@EMA", SqlDbType.Float).Value = reading.EMA;
-                    cmd.Parameters.Add("@Volatility", SqlDbType.Float).Value = reading.Volatility;
-                    cmd.Parameters.Add("@PassedProbFilter", SqlDbType.Bit).Value = reading.PassedProbFilter;
-                    cmd.Parameters.Add("@PassedTrendFilter", SqlDbType.Bit).Value = reading.PassedTrendFilter;
-                    cmd.Parameters.Add("@PassedVolFilter", SqlDbType.Bit).Value = reading.PassedVolFilter;
-                    cmd.Parameters.Add("@FinalSignal", SqlDbType.NVarChar, 10).Value = reading.FinalSignal;
-                    cmd.Parameters.Add("@ModelId", SqlDbType.Int).Value = reading.ModelId;
-                    cmd.Parameters.Add("@ConfigRowId", SqlDbType.Int).Value = reading.ConfigRowId;
-
-                    await conn.OpenAsync();
-                    return await cmd.ExecuteNonQueryAsync() > 0;
-                }
-            } 
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-        }
-
 		public async Task<bool> InsertReadings(List<Reading> readings)
 		{
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(_connectionString))
-                using (SqlCommand cmd = new SqlCommand(StoredProcedures.InsertReading, conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await conn.OpenAsync();
+			try
+			{
+				using (SqlConnection conn = new SqlConnection(_connectionString))
+				using (SqlCommand cmd = new SqlCommand(StoredProcedures.InsertReadings, conn))
+				{
+					cmd.CommandType = CommandType.StoredProcedure;
+					await conn.OpenAsync();
 
-                    DataTable dt = new DataTable();
-                    dt.Columns.Add("@TimestampUtc", typeof(DateTime));
-                    dt.Columns.Add("@CoinId", typeof(int));
-                    dt.Columns.Add("@PredictedClass", typeof(int));
-                    dt.Columns.Add("@ProbSell", typeof(float));
-                    dt.Columns.Add("@ProbHold", typeof(float));
-                    dt.Columns.Add("@ProbBuy", typeof(float));
-                    dt.Columns.Add("@Price", typeof(float));
-                    dt.Columns.Add("@EMA", typeof(float));
-                    dt.Columns.Add("@Volatility", typeof(float));
-                    dt.Columns.Add("@PassedProbFilter", typeof(bool));
-                    dt.Columns.Add("@PassedTrendFilter", typeof(bool));
-                    dt.Columns.Add("@PassedVolFilter", typeof(bool));
-                    dt.Columns.Add("@FinalSignal", typeof(string));
-                    dt.Columns.Add("@ModelId", typeof(int));
-                    dt.Columns.Add("@ConfigRowId", typeof(int));
+					DataTable dt = new DataTable();
+					dt.Columns.Add("@TimestampUtc", typeof(DateTime));
+					dt.Columns.Add("@CoinId", typeof(int));
+					dt.Columns.Add("@PredictedClass", typeof(int));
+					dt.Columns.Add("@ProbSell", typeof(double));
+					dt.Columns.Add("@ProbHold", typeof(double));
+					dt.Columns.Add("@ProbBuy", typeof(double));
+					dt.Columns.Add("@Price", typeof(double));
+					dt.Columns.Add("@EMA", typeof(double));
+					dt.Columns.Add("@Volatility", typeof(double));
+					dt.Columns.Add("@PassedProbFilter", typeof(bool));
+					dt.Columns.Add("@PassedTrendFilter", typeof(bool));
+					dt.Columns.Add("@PassedVolFilter", typeof(bool));
+					dt.Columns.Add("@FinalSignal", typeof(string));
+					dt.Columns.Add("@ModelId", typeof(int));
+					dt.Columns.Add("@ConfigRowId", typeof(int));
+					dt.Columns.Add("@SentToAzure", typeof(bool));
 
-                    foreach(Reading reading in readings)
-                    {
-                        dt.Rows.Add(
-                            reading.TimeStampUTC,
-                            reading.CoinId,
-                            reading.PredictClass,
-                            reading.ProbSell,
-                            reading.ProbHold,
-                            reading.ProbBuy,
-                            reading.Price,
-                            reading.EMA,
-                            reading.Volatility,
-                            reading.PassedProbFilter,
-                            reading.PassedTrendFilter,
-                            reading.PassedVolFilter,
-                            reading.FinalSignal,
-                            reading.ModelId,
-                            reading.ConfigRowId
-                        );
-                    }
+					foreach (Reading r in readings)
+					{
+						dt.Rows.Add(
+							r.TimeStampUTC,
+							r.CoinId,
+							r.PredictClass,
+							r.ProbSell,
+							r.ProbHold,
+							r.ProbBuy,
+							r.Price,
+							r.EMA,
+							r.Volatility,
+							r.PassedProbFilter,
+							r.PassedTrendFilter,
+							r.PassedVolFilter,
+							r.FinalSignal,
+							r.ModelId,
+							r.ConfigRowId,
+							r.SentToAzure
+						);
+					}
 
 					SqlParameter param = new SqlParameter("@Readings", SqlDbType.Structured)
 					{
@@ -141,11 +108,12 @@ namespace Zyprix.Data.Repositories
 					return await cmd.ExecuteNonQueryAsync() > 0;
 				}
 			}
-            catch (Exception ex)
+			catch (Exception ex)
 			{
 				Console.WriteLine(ex.Message);
 				return false;
 			}
 		}
+
 	}
 }

@@ -5,7 +5,6 @@ namespace Zyprix.Data.Interfaces
     public interface IReadingRepository
     {
 		public Task<List<Reading>> GetReadings(int coinId);
-		public Task<bool> InsertReading(Reading reading);
 		public Task<bool> InsertReadings(List<Reading> readings);
 
     }
