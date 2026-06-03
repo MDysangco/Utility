@@ -22,7 +22,7 @@ namespace Zyprix.Models
         public bool PassedVolFilter { get; set; }
         public string FinalSignal { get; set; }
         public int ModelId { get; set; }
-        public int ConfigRowId { get; set; }
+        public string ConfigUniqueId { get; set; }
         public bool SentToAzure { get; set; }
         public DateTime CreateDate { get; set; }
     }

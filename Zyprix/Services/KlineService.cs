@@ -8,12 +8,10 @@ namespace Zyprix.Services
     public class KlineService : IKlineService
     {
         private readonly IKlineRepository _klineRepository;
-        private readonly ICoinService _coinService;
 
-		public KlineService(IKlineRepository klineRepository, ICoinService coinService) 
+		public KlineService(IKlineRepository klineRepository) 
         {
 			_klineRepository = klineRepository;
-			_coinService = coinService;
         }
 
         public async Task<List<Kline>> GetKlines(int? coinId, KlineInterval? interval) => await _klineRepository.GetKlines(coinId, interval);
