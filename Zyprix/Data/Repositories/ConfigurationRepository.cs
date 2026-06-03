@@ -25,7 +25,6 @@ namespace Zyprix.Data.Repositories
 
 					await conn.OpenAsync();
 
-					// Build DataTable matching dbo.ConfigurationType
 					var dt = new DataTable();
 					dt.Columns.Add("@UniqueId", typeof(string));
 					dt.Columns.Add("@BuyProbabilityThreshold", typeof(double));
@@ -62,7 +61,8 @@ namespace Zyprix.Data.Repositories
 
 					cmd.Parameters.Add(param);
 
-					return await cmd.ExecuteNonQueryAsync() > 0;
+					await cmd.ExecuteNonQueryAsync();
+					return true;
 				}
 			}
 			catch (Exception ex)

@@ -72,7 +72,7 @@ namespace Zyprix.Data.Repositories
 					dt.Columns.Add("@PassedVolFilter", typeof(bool));
 					dt.Columns.Add("@FinalSignal", typeof(string));
 					dt.Columns.Add("@ModelId", typeof(int));
-					dt.Columns.Add("@ConfigRowId", typeof(int));
+					dt.Columns.Add("@ConfigUniqueId", typeof(string));
 					dt.Columns.Add("@SentToAzure", typeof(bool));
 
 					foreach (Reading r in readings)
@@ -92,7 +92,7 @@ namespace Zyprix.Data.Repositories
 							r.PassedVolFilter,
 							r.FinalSignal,
 							r.ModelId,
-							r.ConfigRowId,
+							r.ConfigUniqueId,
 							r.SentToAzure
 						);
 					}
@@ -105,7 +105,8 @@ namespace Zyprix.Data.Repositories
 
 					cmd.Parameters.Add(param);
 
-					return await cmd.ExecuteNonQueryAsync() > 0;
+					await cmd.ExecuteNonQueryAsync();
+					return true;
 				}
 			}
 			catch (Exception ex)
