@@ -22,7 +22,7 @@ namespace Zyprix.Data.Repositories
 				using (SqlCommand cmd = new SqlCommand(StoredProcedures.InsertConfigurations, conn))
 				{
 					cmd.CommandType = CommandType.StoredProcedure;
-
+					cmd.CommandTimeout = 120;
 					await conn.OpenAsync();
 
 					var dt = new DataTable();

@@ -12,5 +12,5 @@ namespace Zyprix.Services.Interfaces
         public Task<bool> InsertKlines(List<Kline> klines);
         public Task<List<Kline>> GetKlines(int? coinId, KlineInterval? interval);
 
-    }
+	}
 }

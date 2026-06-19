@@ -26,7 +26,8 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.DeleteKlinesByDateRange, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("StartDate", SqlDbType.Decimal).Value = startDate;
+					cmd.CommandTimeout = 120;
+					cmd.Parameters.Add("StartDate", SqlDbType.Decimal).Value = startDate;
                     cmd.Parameters.Add("EndDate", SqlDbType.Decimal).Value = endDate;
                     await conn.OpenAsync();
 
@@ -48,7 +49,8 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetEarliestRecordedKline, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId;
+					cmd.CommandTimeout = 120;
+					cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId;
                     cmd.Parameters.Add("Interval", SqlDbType.Int).Value = (int)interval;
                     await conn.OpenAsync();
 
@@ -78,7 +80,8 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetLatestRecordedKline, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId;
+					cmd.CommandTimeout = 120;
+					cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId;
                     cmd.Parameters.Add("Interval", SqlDbType.Int).Value = (int)interval;
                     await conn.OpenAsync();
 
@@ -109,7 +112,8 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.InsertKlines, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    await conn.OpenAsync();
+					cmd.CommandTimeout = 120;
+					await conn.OpenAsync();
 
                     DataTable dt = new DataTable();
                     dt.Columns.Add("@CoinId", typeof(int));
@@ -163,7 +167,8 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetKlines, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId.HasValue ? (object)coinId.Value : DBNull.Value;
+					cmd.CommandTimeout = 120;
+					cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId.HasValue ? (object)coinId.Value : DBNull.Value;
                     cmd.Parameters.Add("Interval", SqlDbType.Int).Value = interval.HasValue ? (object)(int)interval.Value : DBNull.Value;
                     await conn.OpenAsync();
 
