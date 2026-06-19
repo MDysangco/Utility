@@ -23,11 +23,12 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetReadings, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
+					cmd.CommandTimeout = 120;
 					cmd.Parameters.Add("@CoinId", SqlDbType.Int).Value = coinId;
 
                     await conn.OpenAsync();
 
-					using (SqlDataReader reader = cmd.ExecuteReader())
+					using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
 					{
                         List<Reading> readings = new List<Reading>();
 
@@ -55,6 +56,7 @@ namespace Zyprix.Data.Repositories
 				using (SqlCommand cmd = new SqlCommand(StoredProcedures.InsertReadings, conn))
 				{
 					cmd.CommandType = CommandType.StoredProcedure;
+					cmd.CommandTimeout = 120;
 					await conn.OpenAsync();
 
 					DataTable dt = new DataTable();

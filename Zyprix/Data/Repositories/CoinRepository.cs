@@ -23,11 +23,12 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetAllCoins, conn))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.CommandTimeout = 120;
                     await conn.OpenAsync();
 
                     List<Coin> coins = new List<Coin>();
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
@@ -54,11 +55,12 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetActiveCoins, conn))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    await conn.OpenAsync();
+					cmd.CommandTimeout = 120;
+					await conn.OpenAsync();
 
                     List<Coin> coins = new List<Coin>();
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
@@ -84,7 +86,8 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.GetCoin, conn))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = Id;
+					cmd.CommandTimeout = 120;
+					cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = Id;
                     await conn.OpenAsync();
 
                     List<Coin> coins = new List<Coin>();
@@ -115,7 +118,8 @@ namespace Zyprix.Data.Repositories
                 using (SqlCommand cmd = new SqlCommand(StoredProcedures.UpdateCoin, conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coin.Id;
+					cmd.CommandTimeout = 120;
+					cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coin.Id;
                     cmd.Parameters.Add("Active", SqlDbType.Bit).Value = coin.Active;
                     cmd.Parameters.Add("BinanceListingDate", SqlDbType.Decimal).Value = coin.BinanceListingDate;
                     await conn.OpenAsync();
@@ -138,6 +142,7 @@ namespace Zyprix.Data.Repositories
 				using (SqlCommand cmd = new SqlCommand(StoredProcedures.UpdateCoins, conn))
 				{
 					cmd.CommandType = CommandType.StoredProcedure;
+					cmd.CommandTimeout = 120;
 					await conn.OpenAsync();
 
 					DataTable dt = new DataTable();
