@@ -1,8 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Text;
 using Utils;
 using Zyprix.Data.Interfaces;
 using Zyprix.Models;
@@ -27,6 +24,7 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					cmd.Parameters.Add("StartDate", SqlDbType.Decimal).Value = startDate;
                     cmd.Parameters.Add("EndDate", SqlDbType.Decimal).Value = endDate;
                     await conn.OpenAsync();
@@ -50,6 +48,7 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId;
                     cmd.Parameters.Add("Interval", SqlDbType.Int).Value = (int)interval;
                     await conn.OpenAsync();
@@ -81,6 +80,7 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId;
                     cmd.Parameters.Add("Interval", SqlDbType.Int).Value = (int)interval;
                     await conn.OpenAsync();
@@ -113,6 +113,7 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					await conn.OpenAsync();
 
                     DataTable dt = new DataTable();
@@ -160,7 +161,7 @@ namespace Zyprix.Data.Repositories
         }
 
         public async Task<List<Kline>> GetKlines(int? coinId, KlineInterval? interval)
-        {
+		{
             try
             {
                 using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -168,21 +169,20 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coinId.HasValue ? (object)coinId.Value : DBNull.Value;
                     cmd.Parameters.Add("Interval", SqlDbType.Int).Value = interval.HasValue ? (object)(int)interval.Value : DBNull.Value;
                     await conn.OpenAsync();
 
-                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
-                    {
-                        List<Kline> klines = new List<Kline>();
-                        while (await reader.ReadAsync())
-                        {
-                            klines.Add(reader.MapTo<Kline>());
-                        }
+					using SqlDataReader reader = await cmd.ExecuteReaderAsync();
+					List<Kline> klines = new List<Kline>();
+					while (await reader.ReadAsync())
+					{
+						klines.Add(reader.MapTo<Kline>());
+					}
 
-                        return klines;
-                    }
-                }
+					return klines;
+				}
             }
             catch (Exception ex)
             {

@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using Utils;
 using Zyprix.Data.Interfaces;
@@ -24,6 +24,7 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.CommandTimeout = 120;
+                    SqlRetry.Apply(conn, cmd);
                     await conn.OpenAsync();
 
                     List<Coin> coins = new List<Coin>();
@@ -56,6 +57,7 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					await conn.OpenAsync();
 
                     List<Coin> coins = new List<Coin>();
@@ -87,6 +89,7 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = Id;
                     await conn.OpenAsync();
 
@@ -119,6 +122,7 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					cmd.Parameters.Add("CoinId", SqlDbType.Int).Value = coin.Id;
                     cmd.Parameters.Add("Active", SqlDbType.Bit).Value = coin.Active;
                     cmd.Parameters.Add("BinanceListingDate", SqlDbType.Decimal).Value = coin.BinanceListingDate;
@@ -143,6 +147,7 @@ namespace Zyprix.Data.Repositories
 				{
 					cmd.CommandType = CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					await conn.OpenAsync();
 
 					DataTable dt = new DataTable();
@@ -157,12 +162,12 @@ namespace Zyprix.Data.Repositories
 					foreach (var coin in coins)
 					{
                         dt.Rows.Add(
-                            coin.Id, 
-                            coin.Ticker, 
-                            coin.Name, 
-                            coin.Address, 
-                            coin.ChainId, 
-                            coin.Active, 
+                            coin.Id,
+                            coin.Ticker,
+                            coin.Name,
+                            coin.Address,
+                            coin.ChainId,
+                            coin.Active,
                             coin.BinanceListingDate
                         );
 					}

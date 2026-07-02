@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using Zyprix.Data.Interfaces;
 using Zyprix.Models;
@@ -23,6 +23,7 @@ namespace Zyprix.Data.Repositories
 				{
 					cmd.CommandType = CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					await conn.OpenAsync();
 
 					var dt = new DataTable();

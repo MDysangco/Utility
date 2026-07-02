@@ -24,6 +24,7 @@ namespace Zyprix.Data.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					cmd.Parameters.Add("@CoinId", SqlDbType.Int).Value = coinId;
 
                     await conn.OpenAsync();
@@ -57,6 +58,7 @@ namespace Zyprix.Data.Repositories
 				{
 					cmd.CommandType = CommandType.StoredProcedure;
 					cmd.CommandTimeout = 120;
+					SqlRetry.Apply(conn, cmd);
 					await conn.OpenAsync();
 
 					DataTable dt = new DataTable();
