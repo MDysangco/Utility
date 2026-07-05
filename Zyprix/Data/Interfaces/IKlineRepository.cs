@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Zyprix.Models;
@@ -11,6 +11,6 @@ namespace Zyprix.Data.Interfaces
         public Task<Kline> GetEarliestRecordedKline(int coinId, KlineInterval interval);
         public Task<bool> InsertKlines(List<Kline> klines);
         public Task<int> DeleteKlinesByDateRange(long startDate, long endDate);
-        public Task<List<Kline>> GetKlines(int? coinId, KlineInterval? interval);
+		public Task<List<Kline>> GetKlines(int? coinId, KlineInterval? interval);
     }
 }

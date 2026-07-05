@@ -1,5 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -8,15 +6,15 @@ namespace Utils
 {
     public class HttpHelper
     {
+        private static readonly HttpClient _client = new HttpClient();
 
         public static async Task<string?> MakeRequest(HttpMethod method, string url, string token)
         {
-            using (HttpClient client = new HttpClient())
+            using (HttpRequestMessage request = new HttpRequestMessage(method, url))
             {
-                HttpRequestMessage? request = new HttpRequestMessage(method, url);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                HttpResponseMessage response = await client.SendAsync(request);
+                HttpResponseMessage response = await _client.SendAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsStringAsync();
@@ -31,14 +29,13 @@ namespace Utils
 
         public static async Task<string?> MakePost(string url, string jsonBody, string token)
         {
-            using (HttpClient client = new HttpClient())
+            using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url))
             {
-                HttpRequestMessage? request = new HttpRequestMessage(HttpMethod.Post, url);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.SendAsync(request);
+                HttpResponseMessage response = await _client.SendAsync(request);
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsStringAsync();
